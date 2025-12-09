@@ -10,6 +10,9 @@
     tests_path: "{{ playbook_dir }}/tests"
 
   tasks:
+    - include_tasks: tasks/create-network.yml
+      tags: always   # همیشه اجرا بشه
+
     - include_tasks: tasks/00-down-state.yml
     - include_tasks: tasks/01-create-dirs.yml
     - include_tasks: tasks/02-define-projects.yml

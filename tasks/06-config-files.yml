@@ -1,3 +1,4 @@
+---
 - name: Deploy customer-specific config files
   when: customer_state == "up"
   ansible.builtin.copy:
@@ -113,3 +114,19 @@
         CACHE_DRIVER=file
         FILESYSTEM_DISK=private
       when: customer_file_update | bool
+
+    - name: "Copy nginx.conf files to customer project"
+      ansible.builtin.template:
+        src: "template/nginx.conf.j2"
+        dest: "{{ project_path }}/{{ inventory_hostname }}/portal-frontend/docker/nginx.conf"
+        mode: '0777'
+        force: yes
+      when: customer_portal_frontend_update | bool
+
+    - name: "Copy Dockerfile files to customer project"
+      ansible.builtin.template:
+        src: "template/Dockerfile.j2"
+        dest: "{{ project_path }}/{{ inventory_hostname }}/portal-frontend/docker/Dockerfile"
+        mode: '0777'
+        force: yes
+      when: customer_portal_frontend_update | bool

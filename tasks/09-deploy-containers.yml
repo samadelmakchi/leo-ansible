@@ -1,3 +1,4 @@
+---
 - name: Start/Restart containers
   community.docker.docker_compose:
     project_src: "{{ project_path }}/{{ inventory_hostname }}/{{ project.folder }}/docker"

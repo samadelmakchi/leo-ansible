@@ -1,3 +1,4 @@
+---
 - name: Reset flag before checking updates
   set_fact:
     any_service_updated: false

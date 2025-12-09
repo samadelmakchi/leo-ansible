@@ -1,3 +1,4 @@
+---
 - name: Define projects list
   when: customer_state == "up"
   set_fact:

@@ -1,3 +1,4 @@
+---
 - name: Deploy backup scripts as templates (so Jinja variables render)
   ansible.builtin.template:
     src: "backup_scripts/{{ item }}.sh.j2"

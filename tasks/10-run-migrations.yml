@@ -1,14 +1,17 @@
+---
 - name: Run migrations only if code was updated
   when:
     - customer_state == "up"
     - any_service_updated | default(false) | bool
   block:
+
+    # صبر تا همه کانتینرها بالا بیان
     - name: Wait for containers to be healthy
       community.docker.docker_compose:
         project_src: "{{ project_path }}/{{ inventory_hostname }}/{{ project.folder }}/docker"
         files:
-        - compose.yml
-        - compose.override.yml
+          - compose.yml
+          - compose.override.yml
         state: present
       loop: "{{ projects }}"
       loop_control:
@@ -16,9 +19,10 @@
       when: project.update | default(false) | bool
       register: _wait
       until: _wait is succeeded
-      retries: 10
+      retries: 15
       delay: 8
 
+    # Portal (Symfony)
     - name: Composer install (portal)
       community.docker.docker_container_exec:
         container: "{{ customer_containers }}-portal"
@@ -33,9 +37,54 @@
       ignore_errors: true
       when: customer_portal_update | default(false) | bool
 
+    # Gateway (CodeIgniter)
     - name: Gateway migration
       community.docker.docker_container_exec:
         container: "{{ customer_containers }}-gateway"
         command: php index.php migrate index false
       ignore_errors: true
       when: customer_gateway_update | default(false) | bool
+
+    # LMS (Laravel)
+    - name: Composer install (lms)
+      community.docker.docker_container_exec:
+        container: "{{ customer_containers }}-lms"
+        command: composer install --no-dev --optimize-autoloader --no-interaction
+      ignore_errors: true
+      when: customer_lms_update | default(false) | bool
+
+    - name: Laravel cache clear + config cache (lms)
+      community.docker.docker_container_exec:
+        container: "{{ customer_containers }}-lms"
+        command: php artisan config:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache
+      ignore_errors: true
+      when: customer_lms_update | default(false) | bool
+
+    - name: Laravel migrate (lms)
+      community.docker.docker_container_exec:
+        container: "{{ customer_containers }}-lms"
+        command: php artisan migrate --force
+      ignore_errors: true
+      when: customer_lms_update | default(false) | bool
+
+    # File Storage (Laravel)
+    - name: Composer install (file)
+      community.docker.docker_container_exec:
+        container: "{{ customer_containers }}-file"
+        command: composer install --no-dev --optimize-autoloader --no-interaction
+      ignore_errors: true
+      when: customer_file_update | default(false) | bool
+
+    - name: Laravel cache clear + config cache (file)
+      community.docker.docker_container_exec:
+        container: "{{ customer_containers }}-file"
+        command: php artisan config:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache
+      ignore_errors: true
+      when: customer_file_update | default(false) | bool
+
+    - name: Laravel migrate (file)
+      community.docker.docker_container_exec:
+        container: "{{ customer_containers }}-file"
+        command: php artisan migrate --force
+      ignore_errors: true
+      when: customer_file_update | default(false) | bool

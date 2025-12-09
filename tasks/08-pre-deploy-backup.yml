@@ -1,3 +1,4 @@
+---
 - name: Run pre-deploy backup (async)
   when:
     - customer_state == "up"

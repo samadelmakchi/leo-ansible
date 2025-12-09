@@ -1,3 +1,4 @@
+---
 - name: Stop and remove everything when state=down
   when: customer_state == "down"
   block:
