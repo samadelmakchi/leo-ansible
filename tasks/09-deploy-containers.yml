@@ -1,34 +1,25 @@
----
 # tasks/09-deploy-containers.yml
-- name: Start/Restart containers
-  community.docker.docker_compose:
-    project_src: "{{ project_path }}/{{ inventory_hostname }}/{{ project_item.folder }}/docker"
-    project_name: "{{ customer_containers }}"
-    files:
-      - compose.yml
-      - compose.override.yml
-    state: present
-    recreate: smart
-    pull: always
-    restarted: yes          # این باعث می‌شه حتی بدون تغییر هم restart بزنه
-    remove_orphans: yes
+- name: Deploy / Restart all customer containers using native docker compose
+  ansible.builtin.command: >
+    docker compose
+    -f compose.yml
+    -f compose.override.yml
+    up
+    -d
+    --remove-orphans
+    --force-recreate
+    --renew-anon-volumes
+  args:
+    chdir: "{{ project_path }}/{{ inventory_hostname }}/{{ project_item.folder }}/docker"
+  register: docker_up
+  changed_when: >-
+    'Recreating' in docker_up.stdout or
+    'Creating' in docker_up.stdout or
+    'Starting' in docker_up.stdout
   become: true
-  tags:
-    - deploy
-    - force_deploy
-
-  # شرط نهایی و کاملاً درست (هیچ # و {{ }} اضافی نداره)
-  when:
-    - customer_state == "up"
-    - >
-      (force_deploy | default(false) | bool) or
-      (git_result.changed | default(false)) or
-      (any_service_updated | default(false)) or
-      (project_item.update | default(false) | bool) or
-      (project_item.first_deploy | default(false) | bool) or
-      (lookup('pipe', 'docker ps -a --filter "name=^{{ customer_containers }}_" --format "{{.Names}}" | wc -l') | int == 0)
-
+  when: customer_state == "up"
   loop: "{{ projects }}"
   loop_control:
     loop_var: project_item
     label: "{{ project_item.name }}"
+  tags: [deploy, force_deploy]

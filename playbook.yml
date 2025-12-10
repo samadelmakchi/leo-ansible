@@ -22,6 +22,8 @@
     - include_tasks: tasks/06-config-files.yml
     - include_tasks: tasks/07-sql-and-uploads.yml
     - include_tasks: tasks/08-pre-deploy-backup.yml
+    - include_tasks: tasks/08.5-pre-pull-images.yml
+    - include_tasks: tasks/08.6-build-customer-images.yml
     - include_tasks: tasks/09-deploy-containers.yml
     - include_tasks: tasks/10-run-migrations.yml
     - include_tasks: tasks/11-write-info-files.yml
