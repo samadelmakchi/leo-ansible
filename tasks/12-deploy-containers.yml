@@ -1,4 +1,4 @@
-# tasks/09-deploy-containers.yml
+---
 - name: Deploy / Restart all customer containers using native docker compose
   ansible.builtin.command: >
     docker compose

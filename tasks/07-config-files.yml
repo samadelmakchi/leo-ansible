@@ -1,4 +1,3 @@
-# tasks/06-config-files.yml
 ---
 - name: Deploy customer-specific config files (copy module)
   ansible.builtin.copy:
@@ -113,7 +112,7 @@
   loop_control:
     label: "{{ item.dest }}"
 
-# جداگانه برای فایل‌هایی که از template هستند
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - name: Deploy nginx.conf and Dockerfile from templates
   ansible.builtin.template:
     src: "{{ item.src }}"

@@ -1,74 +1,76 @@
-# tasks/07-sql-and-uploads.yml ← نسخهٔ نهایی، بدون خطا
 ---
 - name: Restore SQL + Uploads + .env (فقط فایل‌های موجود)
   when: customer_state == "up"
   block:
 
-    # ۱. Gateway → اولویت: simnad_gateway.sql → در غیر اینصورت default_gateway.sql
-    - name: "[Gateway] انتخاب فایل SQL مناسب"
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gateway
+    - name: "[Gateway] Selected SQL file"
       set_fact:
         gateway_sql_path: >-
           {{ lookup('fileglob', playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_gateway.sql')
              or (playbook_dir ~ '/sql/default_gateway.sql') }}
 
-    - name: "[Gateway] کپی SQL به init (همیشه انجام میشه)"
+    - name: "[Gateway] Copy SQL to init"
       ansible.builtin.copy:
         src: "{{ gateway_sql_path }}"
         dest: "{{ project_path }}/{{ inventory_hostname }}/gateway/docker/init/install.sql"
         mode: "0644"
+        force: yes
 
-    # بقیه سرویس‌ها (همه با شرط ساده و ایمن)
-    - name: "[Gateway] کپی uploads"
+    - name: "[Gateway] Copy uploads"
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/sql/{{ inventory_hostname }}_gateway_uploads.zip"
         dest: /tmp/{{ inventory_hostname }}_gateway_uploads.zip
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_gateway_uploads.zip') is file
       ignore_errors: true
 
-    - name: "[Gateway] استخراج uploads"
+    - name: "[Gateway] Extraction uploads"
       ansible.builtin.unarchive:
         src: /tmp/{{ inventory_hostname }}_gateway_uploads.zip
         dest: "{{ project_path }}/{{ inventory_hostname }}/gateway/admin/uploads"
         creates: "{{ project_path }}/{{ inventory_hostname }}/gateway/admin/uploads/index.html"
         remote_src: yes
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_gateway_uploads.zip') is file
       ignore_errors: true
 
-
-    # ۲. Portal
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Portal
     - name: "[Portal] Restore SQL"
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/sql/{{ inventory_hostname }}_portal.sql"
         dest: "{{ project_path }}/{{ inventory_hostname }}/portal/docker/init/install.sql"
         mode: "4"
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_portal.sql') is file
       ignore_errors: true
 
-
-    # ۳. Frontend
-    - name: "[Frontend] کپی و استخراج"
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Frontend
+    - name: "[Frontend] Copy & Extraction"
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/sql/{{ inventory_hostname }}_frontend.zip"
         dest: /tmp/{{ inventory_hostname }}_frontend.zip
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_frontend.zip') is file
       ignore_errors: true
 
-    - name: "[Frontend] استخراج"
+    - name: "[Frontend] Extraction"
       ansible.builtin.unarchive:
         src: /tmp/{{ inventory_hostname }}_frontend.zip
         dest: "{{ project_path }}/{{ inventory_hostname }}/portal-frontend"
         exclude: [node_modules, .git]
         remote_src: yes
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_frontend.zip') is file
       ignore_errors: true
 
-
-    # ۴. LMS
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ LMS
     - name: "[LMS] Restore SQL"
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/sql/{{ inventory_hostname }}_lms.sql"
         dest: "{{ project_path }}/{{ inventory_hostname }}/lms/docker/init/install.sql"
         mode: "4"
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_lms.sql') is file
       ignore_errors: true
 
@@ -76,14 +78,16 @@
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/sql/{{ inventory_hostname }}_lms_uploads.zip"
         dest: /tmp/{{ inventory_hostname }}_lms_uploads.zip
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_lms_uploads.zip') is file
       ignore_errors: true
 
-    - name: "[LMS] استخراج"
+    - name: "[LMS] Extraction"
       ansible.builtin.unarchive:
         src: /tmp/{{ inventory_hostname }}_lms_uploads.zip
         dest: "{{ project_path }}/{{ inventory_hostname }}/lms/storage/app"
         remote_src: yes
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_lms_uploads.zip') is file
       ignore_errors: true
 
@@ -92,16 +96,17 @@
         src: "{{ playbook_dir }}/sql/{{ inventory_hostname }}_lms.env"
         dest: "{{ project_path }}/{{ inventory_hostname }}/lms/.env"
         mode: "0600"
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_lms.env') is file
       ignore_errors: true
 
-
-    # ۵. File (همان الگو)
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ File
     - name: "[File] Restore SQL"
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/sql/{{ inventory_hostname }}_file.sql"
         dest: "{{ project_path }}/{{ inventory_hostname }}/file/docker/init/install.sql"
         mode: "4"
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_file.sql') is file
       ignore_errors: true
 
@@ -109,14 +114,16 @@
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/sql/{{ inventory_hostname }}_file_uploads.zip"
         dest: /tmp/{{ inventory_hostname }}_file_uploads.zip
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_file_uploads.zip') is file
       ignore_errors: true
 
-    - name: "[File] استخراج"
+    - name: "[File] Extraction"
       ansible.builtin.unarchive:
         src: /tmp/{{ inventory_hostname }}_file_uploads.zip
         dest: "{{ project_path }}/{{ inventory_hostname }}/file/storage/app"
         remote_src: yes
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_file_uploads.zip') is file
       ignore_errors: true
 
@@ -125,5 +132,6 @@
         src: "{{ playbook_dir }}/sql/{{ inventory_hostname }}_file.env"
         dest: "{{ project_path }}/{{ inventory_hostname }}/file/.env"
         mode: "0600"
+        force: yes
       when: (playbook_dir ~ '/sql/' ~ inventory_hostname ~ '_file.env') is file
       ignore_errors: true

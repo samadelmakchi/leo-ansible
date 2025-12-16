@@ -6,6 +6,7 @@
     - any_service_updated | default(false) | bool
   block:
 
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
     - name: Install Shekan 4040
       become: true
       block:
@@ -33,6 +34,7 @@
             dest: /etc/resolv.conf
             backup: yes
 
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
     - name: Install required system packages
       become: true
       apt:
@@ -64,18 +66,21 @@
       retries: 5
       delay: 10
 
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
     - name: Remove old venv
       become: true
       file:
         path: /opt/test-venv
         state: absent
 
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
     - name: Create new venv
       become: true
       command: python3 -m venv /opt/test-venv
       args:
         creates: /opt/test-venv/bin/pip
 
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
     - name: Install all packages from PyPI
       become: true
       pip:
@@ -94,24 +99,27 @@
         executable: /opt/test-venv/bin/pip
         extra_args: --retries 20 --timeout 180
 
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
     - name: Install Playwright browsers on background
       become: true
       shell: |
         if [ ! -d "/opt/test-venv/.playwright" ] && [ ! -f "/opt/test-venv/.playwright-installing" ]; then
           touch /opt/test-venv/.playwright-installing
           nohup /opt/test-venv/bin/playwright install chromium --with-deps > /var/log/playwright-install.log 2>&1 &
-          echo "Playwright در پس‌زمینه شروع شد (۲–۵ دقیقه)"
+          echo "Playwright : Started in the background (2–5 minutes)"
         else
-          echo "Playwright قبلاً نصب شده یا در حال نصب است"
+          echo "Playwright : Already installed or in the process of being installed"
         fi
       ignore_errors: true
 
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
     - name: Create report folder
       file:
         path: "{{ log_path }}/test-reports/{{ inventory_hostname }}"
         state: directory
         mode: "0755"
 
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
     - name: Run tests
       become: true
       command: >-
@@ -127,17 +135,17 @@
       failed_when: test_result.rc not in [0,1,2,3,4,5]
       ignore_errors: true
 
-    # نمایش نتیجه (همیشه نشون می‌ده)
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
     - name: Show result
       debug:
         msg: |
-          تست‌ها اجرا شدن!
-          {% if test_result.rc == 0 %}همه پاس شدن
-          {% elif test_result.rc == 1 %}بعضی تست‌ها fail شدن
-          {% elif test_result.rc in [2,3,4] %}تست‌ها skip یا خطای داخلی (معمولاً مرورگر نیست — چند دقیقه دیگه دوباره بزن)
-          {% else %}خطای ناشناخته (rc={{ test_result.rc }})
+          Tests are running!
+          {% if test_result.rc == 0 %}Everyone passed.
+          {% elif test_result.rc == 1 %}Some tests failed.
+          {% elif test_result.rc in [2,3,4] %}Tests skipped or internal error (usually not the browser — try again in a few minutes)
+          {% else %}Unknown error (rc={{ test_result.rc }})
           {% endif %}
-          گزارش → {{ log_path }}/test-reports/{{ inventory_hostname }}/report.html
-          لاگ نصب Playwright → /var/log/playwright-install.log
+          Report → {{ log_path }}/test-reports/{{ inventory_hostname }}/report.html
+          Playwright installation log → /var/log/playwright-install.log
 
   tags: test

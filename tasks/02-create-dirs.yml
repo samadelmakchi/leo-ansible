@@ -4,13 +4,16 @@
     path: "{{ project_path }}/{{ inventory_hostname }}"
     state: directory
     mode: "0755"
+    force: yes
   when: customer_state == "up"
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - name: Ensure other global directories
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: "0755"
+    force: yes
   loop:
     - "{{ backup_path }}/{{ inventory_hostname }}"
     - "{{ log_path }}/backup"

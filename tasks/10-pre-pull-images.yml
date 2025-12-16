@@ -1,5 +1,4 @@
-# tasks/08.5-pre-pull-images.yml  → نسخه اصلاح‌شده و ضدفیل (fail-safe)
-
+---
 - name: Pre-pull global images using native docker (ignore errors if tag not exist)
   ansible.builtin.command: docker pull {{ item.image }}
   loop:
@@ -7,12 +6,12 @@
     - { image: mariadb:10.6.20-focal }
     - { image: nginx:alpine }
     - { image: node:22 }
-    - { image: php:8.1-apache-bookworm }      # درستش اینه
+    - { image: php:8.1-apache-bookworm }
     - { image: php:8.2-apache-bookworm }
   loop_control:
     loop_var: item
     label: "{{ item.image }}"
   changed_when: false
-  ignore_errors: true           # اگر یه تگ واقعاً وجود نداشت، playbook متوقف نشه
+  ignore_errors: true
   become: true
   tags: [deploy, force_deploy]

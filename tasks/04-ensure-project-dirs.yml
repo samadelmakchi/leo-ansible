@@ -4,6 +4,7 @@
     path: "{{ project_path }}/{{ inventory_hostname }}/{{ item.folder }}"
     state: directory
     mode: "0755"
+    force: yes
   loop:
     - { folder: gateway }
     - { folder: portal }
@@ -12,12 +13,14 @@
     - { folder: lms }
   when: customer_state == "up"
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - name: Ensure deep gateway directories (config + uploads) always exist
   ansible.builtin.file:
     path: "{{ project_path }}/{{ inventory_hostname }}/gateway/{{ item }}"
     state: directory
     mode: "0755"
     recurse: yes
+    force: yes
   loop:
     - admin/application/config
     - admin/uploads

@@ -5,6 +5,7 @@
     dest: "{{ item.0 }}"
     content: "{{ item.1 }}"
     mode: "0644"
+    force: yes
   loop:
     - - "{{ info_path }}/volumes/{{ inventory_hostname }}.txt"
       - |

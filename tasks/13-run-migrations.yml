@@ -5,7 +5,7 @@
     - any_service_updated | default(false) | bool
   block:
 
-    # صبر تا همه کانتینرها بالا بیان
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
     - name: Wait for containers to be healthy
       community.docker.docker_compose:
         project_src: "{{ project_path }}/{{ inventory_hostname }}/{{ project.folder }}/docker"
@@ -21,8 +21,9 @@
       until: _wait is succeeded
       retries: 15
       delay: 8
+      ignore_errors: true
 
-    # Portal (Symfony)
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Portal (Symfony)
     - name: Composer install (portal)
       community.docker.docker_container_exec:
         container: "{{ customer_containers }}-portal"
@@ -37,7 +38,7 @@
       ignore_errors: true
       when: customer_portal_update | default(false) | bool
 
-    # Gateway (CodeIgniter)
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gateway (CodeIgniter)
     - name: Gateway migration
       community.docker.docker_container_exec:
         container: "{{ customer_containers }}-gateway"
@@ -45,7 +46,7 @@
       ignore_errors: true
       when: customer_gateway_update | default(false) | bool
 
-    # LMS (Laravel)
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ LMS (Laravel)
     - name: Composer install (lms)
       community.docker.docker_container_exec:
         container: "{{ customer_containers }}-lms"
@@ -67,7 +68,7 @@
       ignore_errors: true
       when: customer_lms_update | default(false) | bool
 
-    # File Storage (Laravel)
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ File Storage (Laravel)
     - name: Composer install (file)
       community.docker.docker_container_exec:
         container: "{{ customer_containers }}-file"

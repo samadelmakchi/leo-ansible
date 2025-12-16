@@ -9,6 +9,7 @@
         branch_var: customer_gateway_git_branches
         tag_var: customer_gateway_git_tags
         update: "{{ customer_gateway_update }}"
+        force: yes
 
       - name: portal
         folder: portal
@@ -16,6 +17,7 @@
         branch_var: customer_portal_git_branches
         tag_var: customer_portal_git_tags
         update: "{{ customer_portal_update }}"
+        force: yes
 
       - name: portal-frontend
         folder: portal-frontend
@@ -23,6 +25,7 @@
         branch_var: customer_portal_frontend_git_branches
         tag_var: customer_portal_frontend_git_tags
         update: "{{ customer_portal_frontend_update }}"
+        force: yes
 
       - name: lms
         folder: lms
@@ -30,6 +33,7 @@
         branch_var: customer_lms_git_branches
         tag_var: customer_lms_git_tags
         update: "{{ customer_lms_update }}"
+        force: yes
 
       - name: file
         folder: file
@@ -37,3 +41,4 @@
         branch_var: customer_file_git_branches
         tag_var: customer_file_git_tags
         update: "{{ customer_file_update }}"
+        force: yes

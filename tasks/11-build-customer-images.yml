@@ -1,4 +1,4 @@
-# tasks/08.6-build-customer-images.yml
+---
 - name: Build customer-specific images only when needed (idempotent + fast)
   ansible.builtin.command: >
     docker compose
