@@ -1,11 +1,8 @@
 services:
   {{ customer_containers }}-file:
-    container_name: {{ customer_containers }}-file
     build:
       context: .
     restart: unless-stopped
-    ports:
-      - {{ customer_file_ports }}:80
     networks:
       - traefik_reverse_proxy
     volumes:
@@ -21,7 +18,6 @@ services:
       - "traefik.http.services.{{ customer_containers }}-file.loadbalancer.server.port=80"
 
   {{ customer_containers }}-file-db:
-    container_name: {{ customer_containers }}-file-db
     image: mariadb:10.6.20-focal
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:

@@ -1,109 +1,152 @@
 ---
 - name: Run migrations only if code was updated
-  # when:
-  #   - customer_state == "up"
-  #   - any_service_updated | default(false) | bool
+  when:
+    - customer_state == "up"
+    - any_service_updated | default(false) | bool
   block:
 
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-    - name: Wait for containers to be healthy
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - name: Ensure containers are up (compose)
       community.docker.docker_compose:
         project_src: "{{ project_path }}/{{ inventory_hostname }}/{{ project.folder }}/docker"
         files:
           - docker-compose.yml
-          - docker-compose.override.yml
         state: present
       loop: "{{ projects }}"
       loop_control:
         loop_var: project
       when: project.update | default(false) | bool
-      register: _wait
-      until: _wait is succeeded
-      retries: 25
-      delay: 20
-      ignore_errors: true
+      register: _compose
+      retries: 5
+      delay: 10
+      until: _compose is succeeded
 
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Portal (Symfony)
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Portal (Symfony)
+    - name: Get portal container IDs
+      command: docker ps --filter "name={{ customer_containers }}-portal" --format "{{ '{{.Names}}' }}"
+      register: portal_containers
+      changed_when: false
+      when: customer_portal_update | default(false) | bool
+
     - name: Composer install (portal)
       community.docker.docker_container_exec:
-        container: "{{ customer_containers }}-portal"
+        container: "{{ item }}"
         command: composer install --no-dev --optimize-autoloader --no-interaction
-      ignore_errors: true
+      loop: "{{ portal_containers.stdout_lines }}"
       async: 300
       poll: 10
+      ignore_errors: true
       when: customer_portal_update | default(false) | bool
 
     - name: Doctrine migrations (portal)
       community.docker.docker_container_exec:
-        container: "{{ customer_containers }}-portal"
+        container: "{{ item }}"
         command: php bin/console doctrine:migrations:migrate --no-interaction --env=prod
-      ignore_errors: true
+      loop: "{{ portal_containers.stdout_lines }}"
       async: 300
       poll: 10
+      ignore_errors: true
       when: customer_portal_update | default(false) | bool
 
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Gateway (CodeIgniter)
-    - name: Gateway migration
-      community.docker.docker_container_exec:
-        container: "{{ customer_containers }}-gateway"
-        command: php index.php migrate index false
-      ignore_errors: true
-      async: 300
-      poll: 10
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Gateway (CodeIgniter)
+    - name: Get gateway container IDs
+      command: docker ps --filter "name={{ customer_containers }}-gateway" --format "{{ '{{.Names}}' }}"
+      register: gateway_containers
+      changed_when: false
       when: customer_gateway_update | default(false) | bool
 
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ LMS (Laravel)
-    - name: Composer install (lms)
+    - name: Gateway migration
       community.docker.docker_container_exec:
-        container: "{{ customer_containers }}-lms"
-        command: composer install --no-dev --optimize-autoloader --no-interaction
-      ignore_errors: true
+        container: "{{ item }}"
+        command: php index.php migrate index false
+      loop: "{{ gateway_containers.stdout_lines }}"
       async: 300
       poll: 10
+      ignore_errors: true
+      when: customer_gateway_update | default(false) | bool
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # LMS (Laravel)
+    - name: Get lms container IDs
+      command: docker ps --filter "name={{ customer_containers }}-lms" --format "{{ '{{.Names}}' }}"
+      register: lms_containers
+      changed_when: false
+      when: customer_lms_update | default(false) | bool
+
+    - name: Composer install (lms)
+      community.docker.docker_container_exec:
+        container: "{{ item }}"
+        command: composer install --no-dev --optimize-autoloader --no-interaction
+      loop: "{{ lms_containers.stdout_lines }}"
+      async: 300
+      poll: 10
+      ignore_errors: true
       when: customer_lms_update | default(false) | bool
 
     - name: Laravel cache clear + config cache (lms)
       community.docker.docker_container_exec:
-        container: "{{ customer_containers }}-lms"
-        command: php artisan config:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache
-      ignore_errors: true
+        container: "{{ item }}"
+        command: >
+          php artisan config:clear &&
+          php artisan config:cache &&
+          php artisan route:cache &&
+          php artisan view:cache
+      loop: "{{ lms_containers.stdout_lines }}"
       async: 300
       poll: 10
+      ignore_errors: true
       when: customer_lms_update | default(false) | bool
 
     - name: Laravel migrate (lms)
       community.docker.docker_container_exec:
-        container: "{{ customer_containers }}-lms"
+        container: "{{ item }}"
         command: php artisan migrate --force
-      ignore_errors: true
+      loop: "{{ lms_containers.stdout_lines }}"
       async: 300
       poll: 10
+      ignore_errors: true
       when: customer_lms_update | default(false) | bool
 
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ File Storage (Laravel)
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # File Storage (Laravel)
+    - name: Get file container IDs
+      command: docker ps --filter "name={{ customer_containers }}-file" --format "{{ '{{.Names}}' }}"
+      register: file_containers
+      changed_when: false
+      when: customer_file_update | default(false) | bool
+
     - name: Composer install (file)
       community.docker.docker_container_exec:
-        container: "{{ customer_containers }}-file"
+        container: "{{ item }}"
         command: composer install --no-dev --optimize-autoloader --no-interaction
-      ignore_errors: true
+      loop: "{{ file_containers.stdout_lines }}"
       async: 300
       poll: 10
+      ignore_errors: true
       when: customer_file_update | default(false) | bool
 
     - name: Laravel cache clear + config cache (file)
       community.docker.docker_container_exec:
-        container: "{{ customer_containers }}-file"
-        command: php artisan config:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache
-      ignore_errors: true
+        container: "{{ item }}"
+        command: >
+          php artisan config:clear &&
+          php artisan config:cache &&
+          php artisan route:cache &&
+          php artisan view:cache
+      loop: "{{ file_containers.stdout_lines }}"
       async: 300
       poll: 10
+      ignore_errors: true
       when: customer_file_update | default(false) | bool
 
     - name: Laravel migrate (file)
       community.docker.docker_container_exec:
-        container: "{{ customer_containers }}-file"
+        container: "{{ item }}"
         command: php artisan migrate --force
-      ignore_errors: true
+      loop: "{{ file_containers.stdout_lines }}"
       async: 300
       poll: 10
+      ignore_errors: true
       when: customer_file_update | default(false) | bool

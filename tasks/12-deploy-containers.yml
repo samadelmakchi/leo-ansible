@@ -1,11 +1,10 @@
 ---
 - name: Deploy / Restart all customer containers using docker_compose_v2
   community.docker.docker_compose_v2:
-    project_name: "{{ customer_containers }}"
+    project_name: "{{ customer_containers }}-{{ project_item.name }}"
     project_src: "{{ project_path }}/{{ inventory_hostname }}/{{ project_item.folder }}/docker"
     files:
       - docker-compose.yml
-      - docker-compose.override.yml
     state: present
     remove_orphans: true
     recreate: always

@@ -1,14 +1,11 @@
 services:
   {{ customer_containers }}-portal:
-    container_name: {{ customer_containers }}-portal
     build:
       context: .
     volumes:
       - ..:/var/www
     depends_on:
       - {{ customer_containers }}-portal-db
-    ports:
-      - {{ customer_portal_ports }}:80
     networks:
       - traefik_reverse_proxy
     restart: unless-stopped
@@ -21,7 +18,6 @@ services:
 
   {{ customer_containers }}-portal-db:
     image: mariadb:10.11
-    container_name: {{ customer_containers }}-portal-db
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
       MYSQL_ROOT_PASSWORD: {{ portal_mysql_root_password }}

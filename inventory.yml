@@ -11,7 +11,7 @@ all:
           vars:
             customer_name: "سیمناد"
             customer_state: "up"
-            customer_containers: "simnad_container"
+            customer_containers: "simnad"
             customer_domain: "simnad.com"
             customer_gateway_ports: 8061
             customer_portal_ports: 7061
@@ -26,7 +26,7 @@ all:
           vars:
             customer_name: "نیکان"
             customer_state: "up"
-            customer_containers: "nikan_container"
+            customer_containers: "nikan"
             customer_domain: "pardazeshafza.com"
             customer_gateway_ports: 8062
             customer_portal_ports: 7062
@@ -41,7 +41,7 @@ all:
           vars:
             customer_name: "تست"
             customer_state: "up"
-            customer_containers: "test_container"
+            customer_containers: "test"
             customer_subdomain_gateway: "testcalibri"
             customer_subdomain_portal: "testportal"
             customer_subdomain_backendportal: "testbackendportal"
@@ -63,7 +63,7 @@ all:
           vars:
             customer_name: "صمد"
             customer_state: "down"
-            customer_containers: "smd_container"
+            customer_containers: "smd"
             customer_domain: "elmakchi.ir"
             customer_gateway_ports: 8064
             customer_portal_ports: 7064

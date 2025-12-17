@@ -1,17 +1,15 @@
 services:
   {{ customer_containers }}-lms:
-    container_name: {{ customer_containers }}-lms
     build:
       context: .
-    ports:
-      - {{ customer_lms_ports }}:80
+    restart: unless-stopped
+    networks:
+      - traefik_reverse_proxy
     volumes:
       - ..:/var/www
     depends_on:
       - {{ customer_containers }}-lms-db
     entrypoint: ["/var/www/docker/entrypoint.sh"]
-    networks:
-      - traefik_reverse_proxy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.{{ customer_containers }}-lms.rule=Host(`{{ customer_subdomain_lms }}.{{ customer_domain }}`)"
@@ -20,7 +18,6 @@ services:
       - "traefik.http.services.{{ customer_containers }}-lms.loadbalancer.server.port=80"
 
   {{ customer_containers }}-lms-db:
-    container_name: {{ customer_containers }}-lms-db
     image: mariadb:10.6.20-focal
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
@@ -32,6 +29,7 @@ services:
     volumes:
       - ./init/:/docker-entrypoint-initdb.d/
       - ./db:/var/lib/mysql
+    restart: unless-stopped
     networks:
       - traefik_reverse_proxy
     

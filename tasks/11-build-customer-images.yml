@@ -3,7 +3,6 @@
   ansible.builtin.command: >
     docker compose
     -f docker-compose.yml
-    -f docker-compose.override.yml
     build
     --pull
     {{ '--no-cache' if force_rebuild | default(false) else '' }}

@@ -1,13 +1,10 @@
 services:
   {{ customer_containers }}-gateway:
-    container_name: {{ customer_containers }}-gateway
     build: .
     volumes:
       - ../admin:/var/www/html
       - ../admin/captcha_images:/var/www/html/captcha_images
       - ../admin/uploads:/var/www/html/uploads
-    ports:
-      - "{{ customer_gateway_ports }}:80"
     networks:
       - traefik_reverse_proxy
     environment:
@@ -22,7 +19,6 @@ services:
 
   {{ customer_containers }}-gateway-db:
     image: mariadb:10.6.20-focal
-    container_name: {{ customer_containers }}-gateway-db
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - ./init/:/docker-entrypoint-initdb.d/
