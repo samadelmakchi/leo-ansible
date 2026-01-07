@@ -1,0 +1,27 @@
+body {
+    font-family: 'Noto Sans Arabic', sans-serif;
+    background-color: #f4f6f8;
+}
+
+.card {
+    border-radius: 8px;
+}
+
+.list-group-item {
+    cursor: pointer;
+}
+
+.form-label {
+    margin-bottom: 0;
+    margin-left: 10px;
+    width: 350px;
+}
+
+.tab-pane div{
+    display: flex;
+    align-items: center;
+}
+
+.form-control{
+    text-align: left;
+}

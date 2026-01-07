@@ -14,6 +14,7 @@
     state: directory
     mode: "0755"
     force: yes
+    recurse: yes
   loop:
     - "{{ backup_path }}/{{ inventory_hostname }}"
     - "{{ log_path }}/backup"
@@ -21,3 +22,5 @@
     - "{{ info_path }}/volumes"
     - "{{ info_path }}/databases"
   when: customer_state == "up"
+  tags: [setup]
+

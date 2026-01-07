@@ -2,3 +2,6 @@ id_rsa
 
 sql/*
 !sql/default_gateway.sql
+
+
+ui/venv
