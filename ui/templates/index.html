@@ -23,80 +23,357 @@
 </head>
 
 <body>
+    <div id="contentWrapper">
 
-    <div class="container-fluid mt-3 mb-3">
-        <div class="row">
-            <!-- تنظیمات -->
-            <div class="col-9">
-                <div class="card">
-                    <div class="card-header">⚙️ تنظیمات</div>
-                
-                    <div class="card-body">
-                
-                        <ul class="nav nav-tabs mb-3">
-                            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#modules">🧩 ماژول‌ها</button></li>
-                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#domain">🌐 دامنه</button></li>
-                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#backup">📁 بکاپ</button></li>
-                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#test">🧪 تست</button></li>
-                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#database">🗄️ پایگاه داده</button>
-                            </li>
-                        </ul>
-                        
-                        <div class="tab-content">
-                            <div class="tab-pane fade show active" id="modules"></div>
-                            <div class="tab-pane fade" id="domain"></div>
-                            <div class="tab-pane fade" id="backup"></div>
-                            <div class="tab-pane fade" id="test"></div>
-                            <div class="tab-pane fade" id="database"></div>
-                        </div>
-                
-                    </div>
-                </div>
+        <header>
+            <div class="d-flex align-items-center gap-2">
+                <img src="/static/img/favicon-white.png" alt="لئو" class="logo">
+                <h1 class="mb-0">لئو <span class="fs-5">(<span id="menu-title">سامانه زیر ساخت کلود کالیبری</span>)</span> </h1>
             </div>
-
-            <!-- اجرا -->
-            <div class="col-3">
-                <div class="card">
-                    <div class="card-header">▶️ اجرا</div>
-                    <div class="card-body">
-                        <select id="customerSelect" class="form-select mb-2" onchange="updateCustomerState()"></select>
-                        <div class="mb-5 fw-bold mt-3 p-2 text-center bg-light rounded border border-secondary">
-                            <span class="fw-bold">وضعیت مشتری : </span>
-                            <span id="customerStateText" class="fw-bold ms-2"></span>
-                            <div class="form-check d-none">
-                                <input class="form-check-input" type="radio" name="customer_state" value="up">
-                                <label class="form-check-label">فعال</label>
-                            </div>
-                            <div class="form-check d-none">
-                                <input class="form-check-input" type="radio" name="customer_state" value="down">
-                                <label class="form-check-label">غیرفعال</label>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="d-grid gap-2 mt-2">
-                            <button class="btn btn-primary mt-2 mb-2">🔄 بروزرسانی</button>
-                            <hr>
-                            <button class="btn btn-danger mt-2 mb-2" onclick="downCustomer()">⬇️ داون کردن مشتری</button>
-                            <hr>
-                            <button class="btn btn-info mt-2 mb-2" onclick="backupCustomer()">🛡️ بکاپ گرفتن</button>
-                            <hr>
-                            <button class="btn btn-warning mt-2" onclick="testFull()">🚀 تست کامل با دپلوی</button>
-                            <button class="btn btn-warning" onclick="testFailFast()">⚡ تست کامل با دپلوی و توقف با هر خطایی</button>
-                            <button class="btn btn-warning mb-2" onclick="testOnly()">🧫 فقط تست</button>
-                            <hr>
-                            <button class="btn btn-success mt-2 mb-2" onclick="saveCustomerVars()">💾 ذخیره در فایل inventory</button>
-                        </div>
-                        <div id="result" class="mt-2 text-success"></div>
-                    </div>
-                </div>
+            <span class="hamburger" onclick="toggleSidebar()">&#9776;</span>
+        </header>
+        
+        <div id="sidebar">
+            <div class="text-center mb-4">
+                <img src="/static/img/favicon.png" alt="لئو" class="sidebar_logo">
             </div>
-
+            <hr>
+            <a href="#" id="homeLink" class="p-2 mx-0 my-2">صفحه اول</a>
+            <a href="#" id="customersLink" class="p-2 mx-0 my-2">مدیریت مشتریان</a>
+            <a href="#" id="resourcesLink" class="p-2 mx-0 my-2">مشاهده منابع مصرفی</a>
+            <a href="#" id="containersLink" class="p-2 mx-0 my-2">مدیریت کانتینر ها</a>
+            <a href="#" id="backupLink" class="p-2 mx-0 my-2">مدیریت بک اپ ها</a>
+            <a href="#" id="logsLink" class="p-2 mx-0 my-2">مدیریت لاگ ها</a>
         </div>
+
+        <div id="mainContent" class="content-section">
+            <div class="container-fluid mt-3 mb-3">
+                <div class="row">
+                    <div class="col-7">
+                        <div class="card">
+                            <div class="card-header">⚙️ لئو</div>
+                            <div class="card-body">
+                                <p>این بخش برای صفحه اول است.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="card">
+                            <div class="card-header">▶️ لئو</div>
+                            <div class="card-body">
+                                <p>این بخش برای صفحه اول است.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-5">
+                        <div class="card">
+                            <div class="card-header">⚙️ لئو</div>
+                            <div class="card-body">
+                                <p>این بخش برای صفحه اول است.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-7">
+                        <div class="card">
+                            <div class="card-header">▶️ لئو</div>
+                            <div class="card-body">
+                                <p>این بخش برای صفحه اول است.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-header">⚙️ لئو</div>
+                            <div class="card-body">
+                                <p>این بخش برای صفحه اول است.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-header">▶️ لئو</div>
+                            <div class="card-body">
+                                <p>این بخش برای صفحه اول است.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-header">▶️ لئو</div>
+                            <div class="card-body">
+                                <p>این بخش برای صفحه اول است.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="customersSection" class="content-section" style="display:none;">
+            <div class="container-fluid mt-3 mb-3">
+                <div class="row">
+                    <!-- تنظیمات -->
+                    <div class="col-9">
+                        <div class="card">
+                            <div class="card-header">⚙️ تنظیمات</div>
+            
+                            <div class="card-body">
+            
+                                <ul class="nav nav-tabs mb-3">
+                                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab"
+                                            data-bs-target="#modules">🧩 ماژول‌ها</button></li>
+                                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#domain">🌐
+                                            دامنه</button></li>
+                                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#backup">📁
+                                            بکاپ</button></li>
+                                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#test">🧪
+                                            تست</button></li>
+                                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
+                                            data-bs-target="#database">🗄️ پایگاه داده</button>
+                                    </li>
+                                </ul>
+            
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="modules"></div>
+                                    <div class="tab-pane fade" id="domain"></div>
+                                    <div class="tab-pane fade" id="backup"></div>
+                                    <div class="tab-pane fade" id="test"></div>
+                                    <div class="tab-pane fade" id="database"></div>
+                                </div>
+            
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- اجرا -->
+                    <div class="col-3">
+                        <div class="card">
+                            <div class="card-header">▶️ اجرا</div>
+                            <div class="card-body">
+                                <select id="customerSelect" class="form-select mb-2" onchange="updateCustomerState()"></select>
+                                <div class="mb-5 fw-bold mt-3 p-2 text-center bg-light rounded border border-secondary">
+                                    <span class="fw-bold">وضعیت مشتری : </span>
+                                    <span id="customerStateText" class="fw-bold ms-2"></span>
+                                    <div class="form-check d-none">
+                                        <input class="form-check-input" type="radio" name="customer_state" value="up">
+                                        <label class="form-check-label">فعال</label>
+                                    </div>
+                                    <div class="form-check d-none">
+                                        <input class="form-check-input" type="radio" name="customer_state" value="down">
+                                        <label class="form-check-label">غیرفعال</label>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="d-grid gap-2 mt-2">
+                                    <button class="btn btn-primary mt-2 mb-2">🔄 بروزرسانی</button>
+                                    <hr>
+                                    <button class="btn btn-danger mt-2 mb-2" onclick="downCustomer()">⬇️ داون کردن مشتری</button>
+                                    <hr>
+                                    <button class="btn btn-info mt-2 mb-2" onclick="backupCustomer()">🛡️ بکاپ گرفتن</button>
+                                    <hr>
+                                    <button class="btn btn-warning mt-2" onclick="testFull()">🚀 تست کامل با دپلوی</button>
+                                    <button class="btn btn-warning" onclick="testFailFast()">⚡ تست کامل با دپلوی و توقف با هر
+                                        خطایی</button>
+                                    <button class="btn btn-warning mb-2" onclick="testOnly()">🧫 فقط تست</button>
+                                    <hr>
+                                    <button class="btn btn-success mt-2 mb-2" onclick="saveCustomerVars()">💾 ذخیره در فایل
+                                        inventory</button>
+                                </div>
+                                <div id="result" class="mt-2 text-success"></div>
+                            </div>
+                        </div>
+                    </div>
+            
+                </div>
+            </div>
+        </div>
+        
+        <div id="resourcesSection" class="content-section" style="display:none;">           
+            <div class="container-fluid mt-3 mb-3">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="card">
+                            <div class="card-header">⚙️ مشاهده منابع مصرفی</div>
+                            <div class="card-body">
+                                <p>این بخش برای نمایش منابع مصرفی است.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card">
+                            <div class="card-header">▶️ مشاهده منابع مصرفی</div>
+                            <div class="card-body">
+                                <p>این بخش برای نمایش منابع مصرفی است.</p>
+                            </div>
+                        </div>
+                    </div>
+            
+                </div>
+            </div>
+        </div>
+        
+        <div id="containersSection" class="content-section" style="display:none;">
+            <div class="container-fluid mt-3 mb-3">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="card">
+                            <div class="card-header">⚙️ مدیریت کانتینر ها</div>
+                            <div class="card-body">
+                                <p>این بخش برای مدیریت کانتینرها است.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card">
+                            <div class="card-header">▶️ مدیریت کانتینر ها</div>
+                            <div class="card-body">
+                                <p>این بخش برای مدیریت کانتینرها است.</p>
+                            </div>
+                        </div>
+                    </div>
+            
+                </div>
+            </div>
+        </div>
+        
+        <div id="backupSection" class="content-section" style="display:none;">
+            <div class="container-fluid mt-3 mb-3">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="card">
+                            <div class="card-header">⚙️ مدیریت بک اپ ها</div>
+                            <div class="card-body">
+                                <p>این بخش برای مدیریت بکاپ‌ها است.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card">
+                            <div class="card-header">▶️ مدیریت بک اپ ها</div>
+                            <div class="card-body">
+                                <p>این بخش برای مدیریت بکاپ‌ها است.</p>
+                            </div>
+                        </div>
+                    </div>
+            
+                </div>
+            </div>
+        </div>
+        
+        <div id="logsSection" class="content-section" style="display:none;">
+            <div class="container-fluid mt-3 mb-3">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="card">
+                            <div class="card-header">⚙️ مدیریت لاگ ها</div>
+                            <div class="card-body">
+                                <p>این بخش برای مدیریت لاگ‌ها است.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card">
+                            <div class="card-header">▶️ مدیریت لاگ ها</div>
+                            <div class="card-body">
+                                <p>این بخش برای مدیریت لاگ‌ها است.</p>
+                            </div>
+                        </div>
+                    </div>
+            
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center p-1 m-0">
+            <p class="p-0 m-0">© 2026 Leo Web UI</p>
+        </footer>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="static/js/labels.js"></script>
     <script src="/static/js/app.js"></script>
+
+    <script>
+        // منو
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const wrapper = document.getElementById("contentWrapper");
+
+            sidebar.classList.toggle("open");
+            wrapper.classList.toggle("shifted");
+        }
+
+        // متغیرها
+        const menuTitle = document.getElementById("menu-title");
+        const sections = {
+            main: document.getElementById("mainContent"),
+            customers: document.getElementById("customersSection"),
+            resources: document.getElementById("resourcesSection"),
+            containers: document.getElementById("containersSection"),
+            backup: document.getElementById("backupSection"),
+            logs: document.getElementById("logsSection")
+        };
+
+        // تابع نمایش یک بخش و مخفی کردن بقیه
+        function showSection(sectionName) {
+            Object.entries(sections).forEach(([name, elem]) => {
+                elem.style.display = name === sectionName ? "block" : "none";
+            });
+        }
+
+        // تابع نمایش بخش و تغییر عنوان منو
+        function showSection(sectionName, title = "") {
+            Object.entries(sections).forEach(([name, elem]) => {
+                elem.style.display = name === sectionName ? "block" : "none";
+            });
+
+            // تغییر عنوان منو در هدر
+            menuTitle.innerText = title;
+        }
+
+        // Event ها برای لینک‌ها
+        document.getElementById("homeLink").addEventListener("click", e => {
+            e.preventDefault();
+            showSection("main", "سامانه زیر ساخت کلود کالیبری");
+            toggleSidebar();
+        });
+
+        document.getElementById("customersLink").addEventListener("click", e => {
+            e.preventDefault();
+            showSection("customers", "مدیریت مشتریان");
+            toggleSidebar();
+        });
+
+        document.getElementById("resourcesLink").addEventListener("click", e => {
+            e.preventDefault();
+            showSection("resources", "مشاهده منابع مصرفی");
+            toggleSidebar();
+        });
+
+        document.getElementById("containersLink").addEventListener("click", e => {
+            e.preventDefault();
+            showSection("containers", "مدیریت کانتینر ها");
+            toggleSidebar();
+        });
+
+        document.getElementById("backupLink").addEventListener("click", e => {
+            e.preventDefault();
+            showSection("backup", "مدیریت بک اپ ها");
+            toggleSidebar();
+        });
+
+        document.getElementById("logsLink").addEventListener("click", e => {
+            e.preventDefault();
+            showSection("logs", "مدیریت لاگ ها");
+            toggleSidebar();
+        });
+
+    </script>
 </body>
 
 </html>

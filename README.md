@@ -215,4 +215,10 @@ DNS معمولاً بین ۱ تا ۱۰ دقیقه پروپاگیت می‌شود
 
 ---
 
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python app.py
+
+
 **ساخته شده با عشق توسط صمد المکچی**  
